@@ -10,6 +10,7 @@ We are testing your ability to **build quickly and well**. Use whatever AI tools
 git clone <this-repo>
 cd next_assesment
 npm install
+npm run db:reset   # creates and seeds local.db
 npm run dev
 ```
 
@@ -57,11 +58,40 @@ OPENAI_API_KEY=<provided-key>
 | Next.js (App Router) + TypeScript | `src/app/` |
 | Tailwind CSS v4 + shadcn/ui | `src/components/ui/`, `components.json` |
 | Example builder component | `src/components/builder/` |
-| SQLite (local DB) | see below |
+| SQLite + Drizzle ORM, wired and seeded | `src/db/`, `drizzle.config.ts` |
+| Vitest + React Testing Library, example test | `src/components/builder/text-element.test.tsx` |
+| Pre-commit hook (type-check, lint, related tests) | `.husky/pre-commit` |
 
 ### Database
 
-Use SQLite so everything stays local — no external services to set up. Wire it up with the lightweight tooling of your choice (e.g. `better-sqlite3`, Drizzle, or Prisma with a SQLite datasource). The schema design is part of the assessment.
+Everything stays local — SQLite (`local.db`) with [Drizzle ORM](https://orm.drizzle.team), no external services. The client is ready to import from server code:
+
+```ts
+import { db } from "@/db"
+import { pages } from "@/db/schema"
+
+const allPages = db.select().from(pages).all()
+```
+
+| Command | What it does |
+|---------|--------------|
+| `npm run db:push` | Sync `src/db/schema.ts` to `local.db` (run after schema changes) |
+| `npm run db:studio` | Open a browser GUI to inspect and edit the database |
+| `npm run db:seed` | Insert the example page (skips if data already exists) |
+| `npm run db:reset` | Delete the database, recreate it from the schema, and re-seed |
+
+An example `pages` table is provided in `src/db/schema.ts` to show the pattern — extend or replace it freely. The data model is yours to design.
+
+### Testing & pre-commit
+
+Vitest with React Testing Library is set up, with an example test next to the example component. Test files are colocated as `*.test.tsx`.
+
+```bash
+npm test            # run once
+npm run test:watch  # watch mode
+```
+
+Every commit runs a pre-commit hook (Husky): `tsc --noEmit`, then ESLint and any tests related to your staged files (lint-staged). If the hook fails, fix the issue — don't bypass it.
 
 ## What we evaluate
 

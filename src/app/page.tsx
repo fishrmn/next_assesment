@@ -47,7 +47,7 @@ const userStories = [
     icon: Bot,
     title: "Edit with AI",
     description:
-      "The user describes a change in plain language and the page configuration updates. An OpenAI key is provided with your invite.",
+      "The user describes a change in plain language and the page configuration updates. An OpenAI key will be provided during your interview.",
   },
 ] as const
 
