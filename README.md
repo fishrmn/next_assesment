@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Page Builder Assessment
 
-## Getting Started
+Welcome! This assessment asks you to build a small **website page builder** — think a stripped-down Squarespace. A user picks a template, tweaks the design, previews the result live, and saves their work.
 
-First, run the development server:
+We are testing your ability to **build quickly and well**. Use whatever AI tools, editors, and workflows make you fastest — Cursor, Copilot, Claude, ChatGPT, or none at all. There are no restrictions on tooling. We care about the result and the decisions you made along the way.
+
+## Getting started
 
 ```bash
+git clone <this-repo>
+cd next_assesment
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). The home page summarizes this brief and is yours to replace as the app takes shape.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## What you're building
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+An interactive page builder where a user can:
 
-## Learn More
+1. **Choose one of three templates** — three distinct page layouts to start from.
+2. **Adjust design elements** — each element on the page exposes configuration (e.g. text content, colors, alignment). What is configurable, and how it's exposed in the editor, is up to you.
+3. **See changes immediately** — the preview updates live as the user edits.
+4. **Toggle preview size** — support a partial (editor side-by-side) view and a full-screen preview of the page.
+5. **Save their work** — selections persist to the local SQLite database and reload on revisit.
 
-To learn more about Next.js, take a look at the following resources:
+The app must work on **mobile and desktop**.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Your decisions
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+This is intentionally open-ended. You will need to decide:
 
-## Deploy on Vercel
+- **Templating** — how templates are defined, stored, and rendered.
+- **Configuration** — how each element declares what is configurable, and how the editor exposes those controls.
+- **Component model** — build the base components a page is composed of. An example `TextElement` component is provided in `src/components/builder/` as a rendering reference; the rest are yours to design.
+- **Editor UX** — how editing, previewing, and saving fit together.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+We'd rather see a small set of elements done well than many done poorly.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## AI editor
+
+Add an **AI-assisted editing** feature: the user describes a change in natural language (e.g. "make the hero darker and the headline bigger") and the page configuration updates accordingly.
+
+We will provide an OpenAI API key with your invite. Put it in `.env.local`:
+
+```bash
+OPENAI_API_KEY=<provided-key>
+```
+
+> The key is temporary and will be revoked after the assessment. Never commit it.
+
+## What's provided
+
+| Provided | Where |
+|----------|-------|
+| Next.js (App Router) + TypeScript | `src/app/` |
+| Tailwind CSS v4 + shadcn/ui | `src/components/ui/`, `components.json` |
+| Example builder component | `src/components/builder/` |
+| SQLite (local DB) | see below |
+
+### Database
+
+Use SQLite so everything stays local — no external services to set up. Wire it up with the lightweight tooling of your choice (e.g. `better-sqlite3`, Drizzle, or Prisma with a SQLite datasource). The schema design is part of the assessment.
+
+## What we evaluate
+
+- **Speed to working software** — does the core loop (pick template → edit → preview → save) work?
+- **Decision quality** — sensible data model, component boundaries, and editor architecture.
+- **UX polish** — immediate preview, mobile + desktop, full-screen toggle.
+- **Code clarity** — could another engineer pick this up tomorrow?
+
+## Submitting
+
+1. Push your work to a fork or a fresh repo and send us the link.
+2. Include a short note (in the README or a `NOTES.md`) covering the decisions you made, trade-offs, and what you'd do next with more time.
