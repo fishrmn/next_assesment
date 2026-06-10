@@ -24,7 +24,15 @@ Requires [Docker](https://docs.docker.com/get-docker/) and a `.env.local` file (
 npm run docker
 ```
 
-Open [http://localhost:3000](http://localhost:3000). On first run the entrypoint creates and seeds the database automatically.
+This starts the stack in the background, waits for Drizzle Studio and the app to respond, then opens [https://local.drizzle.studio/](https://local.drizzle.studio/) and [http://localhost:3000](http://localhost:3000) in your default browser. Logs stream in the terminal until you press Ctrl+C (containers keep running).
+
+To start without opening browsers: `DOCKER_OPEN_BROWSER=0 npm run docker`
+
+To run in the foreground without the browser helper: `npm run docker:up`
+
+On first run, the `db-init` service creates and seeds the database if it does not exist yet.
+
+Drizzle Studio (database GUI) starts alongside the app. An nginx proxy on port 4983 forwards traffic to the studio container and adds the browser headers Docker requires.
 
 - The SQLite database persists in the `sqlite_data` named volume across restarts.
 - Rebuild after dependency changes: `npm run docker`
