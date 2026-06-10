@@ -133,6 +133,9 @@ const moderna: Template = {
       textColor: "#2e211b",
       ctaLabel: "Book appointment",
       ctaHref: "#contact",
+      imageUrl:
+        "https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=900&h=700&fit=crop&q=80&auto=format",
+      imageStyle: "side",
     },
     {
       type: "text",
@@ -226,6 +229,9 @@ const lush: Template = {
       textColor: "#86198f",
       ctaLabel: "Come say hi",
       ctaHref: "#contact",
+      imageUrl:
+        "https://images.unsplash.com/photo-1559599101-f09722fb4948?w=900&h=700&fit=crop&q=80&auto=format",
+      imageStyle: "side",
     },
     {
       type: "gallery",
