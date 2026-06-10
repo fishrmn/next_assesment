@@ -66,10 +66,22 @@ const elegance: Template = {
       columns: 4,
       rounded: true,
       images: [
-        { src: "https://picsum.photos/seed/elegance1/600/600", alt: "Relaxing scalp treatment" },
-        { src: "https://picsum.photos/seed/elegance2/600/600", alt: "Spa oils and warm towels" },
-        { src: "https://picsum.photos/seed/elegance3/600/600", alt: "Skin brightening facial" },
-        { src: "https://picsum.photos/seed/elegance4/600/600", alt: "Body massage session" },
+        {
+          src: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&h=600&fit=crop&q=80&auto=format",
+          alt: "Relaxing body massage with warm oils",
+        },
+        {
+          src: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600&h=600&fit=crop&q=80&auto=format",
+          alt: "Spa essentials — towels, lotion, and candlelight",
+        },
+        {
+          src: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&h=600&fit=crop&q=80&auto=format",
+          alt: "Skin brightening facial treatment",
+        },
+        {
+          src: "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&h=600&fit=crop&q=80&auto=format",
+          alt: "Our calm, light-filled salon floor",
+        },
       ],
     },
     {
@@ -160,9 +172,18 @@ const moderna: Template = {
       columns: 3,
       rounded: true,
       images: [
-        { src: "https://picsum.photos/seed/moderna1/600/800", alt: "The city's top stylists" },
-        { src: "https://picsum.photos/seed/moderna2/600/800", alt: "Make yourself at home" },
-        { src: "https://picsum.photos/seed/moderna3/600/800", alt: "Fresh blowout styling" },
+        {
+          src: "https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=600&h=800&fit=crop&q=80&auto=format",
+          alt: "Make yourself at home — our rose styling chairs",
+        },
+        {
+          src: "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?w=600&h=800&fit=crop&q=80&auto=format",
+          alt: "Wash and care by the city's top stylists",
+        },
+        {
+          src: "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=600&h=800&fit=crop&q=80&auto=format",
+          alt: "A fresh blowout in progress",
+        },
       ],
     },
     {
@@ -209,12 +230,30 @@ const lush: Template = {
       columns: 3,
       rounded: true,
       images: [
-        { src: "https://picsum.photos/seed/lush1/600/600", alt: "Pastel pink waves" },
-        { src: "https://picsum.photos/seed/lush2/600/600", alt: "Glitter braid set" },
-        { src: "https://picsum.photos/seed/lush3/600/600", alt: "Curly cut transformation" },
-        { src: "https://picsum.photos/seed/lush4/600/600", alt: "Vivid violet color" },
-        { src: "https://picsum.photos/seed/lush5/600/600", alt: "Beach waves" },
-        { src: "https://picsum.photos/seed/lush6/600/600", alt: "Nail art close-up" },
+        {
+          src: "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?w=600&h=600&fit=crop&q=80&auto=format",
+          alt: "Vivid violet color, soft waves",
+        },
+        {
+          src: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?w=600&h=600&fit=crop&q=80&auto=format",
+          alt: "Pink mani moment",
+        },
+        {
+          src: "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&h=600&fit=crop&q=80&auto=format",
+          alt: "Glam makeup touch-up",
+        },
+        {
+          src: "https://images.unsplash.com/photo-1562322140-8baeececf3df?w=600&h=600&fit=crop&q=80&auto=format",
+          alt: "Happy blowout, happy client",
+        },
+        {
+          src: "https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=600&h=600&fit=crop&q=80&auto=format",
+          alt: "Fresh fade energy",
+        },
+        {
+          src: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=600&h=600&fit=crop&q=80&auto=format",
+          alt: "Sharp razor details",
+        },
       ],
     },
     {
