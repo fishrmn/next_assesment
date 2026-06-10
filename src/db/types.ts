@@ -1,23 +1,14 @@
 import type { PageConfig } from "@/components/builder/types"
 
-/**
- * Hand-written row types for the two Supabase tables (see supabase/schema.sql).
- * If the schema grows, switch to generated types:
- * `supabase gen types typescript --project-id <ref>`.
- */
-export type User = {
-  id: string
-  name: string
-  email: string | null
-  created_at: string
-}
+import type { Tables } from "./database.types"
 
-export type Page = {
-  id: string
-  user_id: string
-  name: string
-  template: string
+/**
+ * Row types derived from the generated Supabase types (src/db/database.types.ts).
+ * Regenerate after schema changes: `supabase gen types typescript --linked`.
+ * `config` is narrowed from `Json` to the app-level `PageConfig`.
+ */
+export type User = Tables<"users">
+
+export type Page = Omit<Tables<"pages">, "config"> & {
   config: PageConfig
-  created_at: string
-  updated_at: string
 }

@@ -1,5 +1,7 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js"
 
+import type { Database } from "./database.types"
+
 /**
  * Supabase client built with the secret key — it bypasses RLS, so it must
  * never reach the browser. App code imports `@/db` (guarded by `server-only`);
@@ -9,9 +11,9 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js"
  * Created lazily so importing the module (e.g. during `next build`) doesn't
  * require credentials — only actually querying does.
  */
-let client: SupabaseClient | null = null
+let client: SupabaseClient<Database> | null = null
 
-export function getSupabase(): SupabaseClient {
+export function getSupabase(): SupabaseClient<Database> {
   if (client) return client
 
   const url = process.env.SUPABASE_URL
@@ -23,7 +25,7 @@ export function getSupabase(): SupabaseClient {
     )
   }
 
-  client = createClient(url, secretKey, {
+  client = createClient<Database>(url, secretKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   })
   return client
