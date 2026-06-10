@@ -90,6 +90,17 @@ function HeroForm({ config, onChange }: FormProps<"hero">) {
         placeholder="https://…"
         onChange={(imageUrl) => onChange({ imageUrl: imageUrl || undefined })}
       />
+      <SelectField
+        label="Image style"
+        value={config.imageStyle ?? "background"}
+        options={[
+          { value: "background", label: "Background (dark overlay)" },
+          { value: "side", label: "Beside the text" },
+        ]}
+        onChange={(imageStyle) =>
+          onChange({ imageStyle: imageStyle as "background" | "side" })
+        }
+      />
       <TextField
         label="Button label"
         value={config.ctaLabel ?? ""}

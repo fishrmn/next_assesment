@@ -33,7 +33,7 @@ never reply with JSON, only with tool calls and a final summary.
 
 Element types and their fields ("?" = optional):
 - text: text, level ("h1"|"h2"|"h3"|"p"), align, color?
-- hero: heading, subheading?, align, backgroundColor?, textColor?, ctaLabel?, ctaHref?, imageUrl?
+- hero: heading, subheading?, align, backgroundColor?, textColor?, ctaLabel?, ctaHref?, imageUrl?, imageStyle? ("background"|"side")
 - services: title, items [{ name, price, description? }], columns (1|2|3), accentColor?
 - gallery: title?, images [{ src, alt }], columns (2|3|4), rounded? (boolean)
 - cta: label, href, align, backgroundColor?, textColor?, size ("sm"|"md"|"lg")

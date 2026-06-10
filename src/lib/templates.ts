@@ -24,11 +24,14 @@ const elegance: Template = {
       heading: "Elevate Your Style, Define Your Confidence",
       subheading:
         "Experience personalized spa and wellness care that nurtures your body, mind, and spirit.",
-      align: "center",
+      align: "left",
       backgroundColor: "#faf7f0",
       textColor: "#3f3528",
       ctaLabel: "Book an appointment",
       ctaHref: "#contact",
+      imageUrl:
+        "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=900&h=700&fit=crop&q=80&auto=format",
+      imageStyle: "side",
     },
     {
       type: "text",

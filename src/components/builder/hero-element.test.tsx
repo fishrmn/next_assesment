@@ -46,4 +46,41 @@ describe("HeroElement", () => {
 
     expect(screen.queryByRole("link")).toBeNull()
   })
+
+  it("renders the image beside the text without an overlay when imageStyle is side", () => {
+    render(
+      <HeroElement
+        config={{
+          type: "hero",
+          heading: "Side hero",
+          align: "left",
+          imageUrl: "https://example.test/salon.jpg",
+          imageStyle: "side",
+        }}
+      />
+    )
+
+    const section = screen.getByRole("heading", { level: 1 }).closest("section")
+    const image = section?.querySelector("img")
+    expect(image?.getAttribute("src")).toBe("https://example.test/salon.jpg")
+    expect(section?.style.backgroundImage).toBe("")
+    expect(section?.querySelector("[aria-hidden]")).toBeNull()
+  })
+
+  it("uses the image as a dark-overlay background by default", () => {
+    render(
+      <HeroElement
+        config={{
+          type: "hero",
+          heading: "Background hero",
+          align: "center",
+          imageUrl: "https://example.test/salon.jpg",
+        }}
+      />
+    )
+
+    const section = screen.getByRole("heading", { level: 1 }).closest("section")
+    expect(section?.style.backgroundImage).toContain("https://example.test/salon.jpg")
+    expect(section?.querySelector("[aria-hidden]")).not.toBeNull()
+  })
 })

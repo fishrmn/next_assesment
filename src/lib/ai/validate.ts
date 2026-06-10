@@ -27,6 +27,7 @@ const ELEMENT_FIELDS: Record<ElementType, Record<string, FieldSpec>> = {
     ctaLabel: { kind: "string" },
     ctaHref: { kind: "string" },
     imageUrl: { kind: "string" },
+    imageStyle: { kind: "enum", values: ["background", "side"] },
   },
   services: {
     title: { kind: "string", required: true },
