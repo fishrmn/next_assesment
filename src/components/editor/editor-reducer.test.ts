@@ -63,4 +63,13 @@ describe("editorReducer", () => {
     expect(result[3]).toMatchObject({ type: "services" })
     expect(result[3].id).toBeTruthy()
   })
+
+  it("replaces the whole config", () => {
+    const next: PageConfig = [
+      { id: "x", type: "text", text: "Only", level: "h1", align: "center" },
+    ]
+    const result = editorReducer(config, { type: "replace", config: next })
+
+    expect(result).toBe(next)
+  })
 })

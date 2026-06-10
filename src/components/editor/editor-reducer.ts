@@ -9,6 +9,7 @@ export type EditorAction =
   | { type: "move"; id: string; direction: "up" | "down" }
   | { type: "remove"; id: string }
   | { type: "add"; element: ElementConfig }
+  | { type: "replace"; config: PageConfig }
 
 /** Stored configs may lack ids — assign one so selection and reorder work. */
 export function normalizeConfig(config: PageConfig): PageConfig {
@@ -40,6 +41,8 @@ export function editorReducer(
       return config.filter((element) => element.id !== action.id)
     case "add":
       return [...config, action.element]
+    case "replace":
+      return action.config
   }
 }
 

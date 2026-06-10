@@ -7,9 +7,11 @@ import { savePageAction } from "@/app/actions"
 import { ElementRenderer } from "@/components/builder/element-renderer"
 import type { ElementConfig, ElementType } from "@/components/builder/types"
 import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
 import type { Page } from "@/db/types"
 import { cn } from "@/lib/utils"
 
+import { AiAssist } from "./ai-assist"
 import {
   defaultElementConfig,
   editorReducer,
@@ -122,6 +124,13 @@ export function Editor({ initialPage }: { initialPage: Page }) {
               mobilePane === "edit" ? "block" : "hidden"
             )}
           >
+            <div className="p-4 pb-0">
+              <AiAssist
+                config={config}
+                onReplace={(next) => apply({ type: "replace", config: next })}
+              />
+              <Separator className="mt-4" />
+            </div>
             <Inspector
               config={config}
               selectedId={selectedId}

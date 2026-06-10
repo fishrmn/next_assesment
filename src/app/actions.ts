@@ -5,6 +5,7 @@ import { redirect } from "next/navigation"
 
 import type { PageConfig } from "@/components/builder/types"
 import { createPage, updatePage, type Page } from "@/db"
+import { runEditAgent, type AgentResult } from "@/lib/ai/agent"
 import { getTemplate } from "@/lib/templates"
 
 export type ActionResult<T> =
@@ -41,6 +42,29 @@ export async function createPageAction(input: {
 
   revalidatePath("/")
   redirect(`/builder/${page.id}`)
+}
+
+/**
+ * Runs the AI edit agent on the editor's current (unsaved) config. Nothing is
+ * persisted here — the client applies the result to its state and the user
+ * saves explicitly, so no revalidatePath.
+ */
+export async function aiEditPageAction(
+  instruction: string,
+  config: PageConfig
+): Promise<ActionResult<AgentResult>> {
+  if (!instruction.trim()) {
+    return { ok: false, error: "Describe the change you want." }
+  }
+  try {
+    return { ok: true, data: await runEditAgent(config, instruction.trim()) }
+  } catch (error) {
+    console.error("aiEditPageAction failed:", error)
+    return {
+      ok: false,
+      error: "AI edit failed. Check your OpenAI setup and try again.",
+    }
+  }
 }
 
 export async function savePageAction(
