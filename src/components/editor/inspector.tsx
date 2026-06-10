@@ -18,10 +18,7 @@ import type {
   PageConfig,
 } from "@/components/builder/types"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
-
-import { ElementForm } from "./element-forms"
 
 const elementIcons: Record<ElementType, typeof Type> = {
   text: Type,
@@ -32,7 +29,7 @@ const elementIcons: Record<ElementType, typeof Type> = {
   contact: Contact,
 }
 
-const elementNames: Record<ElementType, string> = {
+export const elementNames: Record<ElementType, string> = {
   text: "Text",
   hero: "Hero",
   services: "Services",
@@ -61,7 +58,6 @@ export function Inspector({
   config,
   selectedId,
   onSelect,
-  onUpdate,
   onMove,
   onRemove,
   onAdd,
@@ -69,17 +65,16 @@ export function Inspector({
   config: PageConfig
   selectedId: string | null
   onSelect: (id: string) => void
-  onUpdate: (id: string, patch: Partial<ElementConfig>) => void
   onMove: (id: string, direction: "up" | "down") => void
   onRemove: (id: string) => void
   onAdd: (type: ElementType) => void
 }) {
-  const selected = config.find((element) => element.id === selectedId) ?? null
-
   return (
-    <div className="flex flex-col gap-4 p-4">
-      <div className="flex flex-col gap-1">
-        <h2 className="px-1 text-sm font-semibold">Elements</h2>
+    <div className="flex flex-col gap-5 p-4">
+      <div className="flex flex-col gap-1.5">
+        <h2 className="px-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Layers
+        </h2>
         <ul className="flex flex-col gap-1">
           {config.map((element, index) => {
             const Icon = elementIcons[element.type]
@@ -134,7 +129,9 @@ export function Inspector({
       </div>
 
       <div className="flex flex-col gap-2">
-        <h2 className="px-1 text-sm font-semibold">Add element</h2>
+        <h2 className="px-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Add element
+        </h2>
         <div className="grid grid-cols-3 gap-2">
           {(Object.keys(elementNames) as ElementType[]).map((type) => {
             const Icon = elementIcons[type]
@@ -152,25 +149,6 @@ export function Inspector({
           })}
         </div>
       </div>
-
-      <Separator />
-
-      {selected ? (
-        <div className="flex flex-col gap-4 pb-8">
-          <h2 className="px-1 text-sm font-semibold">
-            {elementNames[selected.type]} settings
-          </h2>
-          <ElementForm
-            config={selected}
-            onChange={(patch) => onUpdate(selected.id!, patch)}
-          />
-        </div>
-      ) : (
-        <p className="px-1 text-sm text-muted-foreground">
-          Select an element in the list or click it in the preview to edit its
-          settings.
-        </p>
-      )}
     </div>
   )
 }

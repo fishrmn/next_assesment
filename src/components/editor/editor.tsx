@@ -18,7 +18,8 @@ import {
   normalizeConfig,
 } from "./editor-reducer"
 import { EditorToolbar, type ViewMode } from "./editor-toolbar"
-import { Inspector } from "./inspector"
+import { ElementForm } from "./element-forms"
+import { elementNames, Inspector } from "./inspector"
 
 export function Editor({ initialPage }: { initialPage: Page }) {
   const [config, dispatch] = useReducer(
@@ -68,6 +69,7 @@ export function Editor({ initialPage }: { initialPage: Page }) {
   }, [viewMode])
 
   const showInspector = viewMode === "split"
+  const selected = config.find((element) => element.id === selectedId) ?? null
 
   return (
     <div className="flex min-h-dvh w-full flex-col">
@@ -114,28 +116,21 @@ export function Editor({ initialPage }: { initialPage: Page }) {
       <div
         className={cn(
           "flex-1",
-          showInspector && "lg:grid lg:grid-cols-[360px_minmax(0,1fr)]"
+          showInspector &&
+            "lg:grid lg:grid-cols-[280px_minmax(0,1fr)_320px]"
         )}
       >
         {showInspector ? (
           <aside
             className={cn(
-              "border-r lg:block lg:h-[calc(100dvh-49px)] lg:overflow-y-auto",
+              "border-r bg-background lg:block lg:h-[calc(100dvh-49px)] lg:overflow-y-auto",
               mobilePane === "edit" ? "block" : "hidden"
             )}
           >
-            <div className="p-4 pb-0">
-              <AiAssist
-                config={config}
-                onReplace={(next) => apply({ type: "replace", config: next })}
-              />
-              <Separator className="mt-4" />
-            </div>
             <Inspector
               config={config}
               selectedId={selectedId}
               onSelect={setSelectedId}
-              onUpdate={(id, patch) => apply({ type: "update", id, patch })}
               onMove={(id, direction) => apply({ type: "move", id, direction })}
               onRemove={(id) => {
                 apply({ type: "remove", id })
@@ -152,32 +147,75 @@ export function Editor({ initialPage }: { initialPage: Page }) {
 
         <div
           className={cn(
-            "lg:h-[calc(100dvh-49px)] lg:overflow-y-auto",
+            "bg-muted/50 lg:h-[calc(100dvh-49px)] lg:overflow-y-auto",
             showInspector && mobilePane === "edit" ? "hidden lg:block" : "block"
           )}
         >
-          <div className="bg-background text-foreground">
-            {config.map((element: ElementConfig) => (
-              <div
-                key={element.id}
-                onClick={() => setSelectedId(element.id!)}
-                className={cn(
-                  "cursor-pointer ring-inset transition-shadow",
-                  element.id === selectedId
-                    ? "ring-2 ring-primary"
-                    : "hover:ring-2 hover:ring-primary/30"
-                )}
-              >
-                <ElementRenderer config={element} />
-              </div>
-            ))}
-            {config.length === 0 ? (
-              <p className="px-6 py-16 text-center text-sm text-muted-foreground">
-                This page is empty — add an element from the panel.
-              </p>
-            ) : null}
+          <div className="mx-auto flex max-w-5xl flex-col px-4 py-6 sm:px-8">
+            <div className="mb-3 flex items-center gap-2 px-1 text-xs text-muted-foreground">
+              <span className="rounded-full bg-primary/10 px-2 py-0.5 font-medium text-primary">
+                Desktop
+              </span>
+              <span className="truncate font-medium">{name}</span>
+            </div>
+            <div className="overflow-hidden rounded-xl border bg-background text-foreground shadow-lg ring-1 ring-foreground/5">
+              {config.map((element: ElementConfig) => (
+                <div
+                  key={element.id}
+                  onClick={() => setSelectedId(element.id!)}
+                  className={cn(
+                    "cursor-pointer ring-inset transition-shadow",
+                    element.id === selectedId
+                      ? "ring-2 ring-primary"
+                      : "hover:ring-2 hover:ring-primary/30"
+                  )}
+                >
+                  <ElementRenderer config={element} />
+                </div>
+              ))}
+              {config.length === 0 ? (
+                <p className="px-6 py-16 text-center text-sm text-muted-foreground">
+                  This page is empty — add an element from the panel.
+                </p>
+              ) : null}
+            </div>
           </div>
         </div>
+
+        {showInspector ? (
+          <aside
+            className={cn(
+              "border-t bg-background lg:block lg:h-[calc(100dvh-49px)] lg:overflow-y-auto lg:border-l lg:border-t-0",
+              mobilePane === "edit" ? "block" : "hidden"
+            )}
+          >
+            <div className="flex flex-col gap-5 p-4">
+              <AiAssist
+                config={config}
+                onReplace={(next) => apply({ type: "replace", config: next })}
+              />
+              <Separator />
+              {selected ? (
+                <div className="flex flex-col gap-4 pb-8">
+                  <h2 className="px-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    {elementNames[selected.type]} settings
+                  </h2>
+                  <ElementForm
+                    config={selected}
+                    onChange={(patch) =>
+                      apply({ type: "update", id: selected.id!, patch })
+                    }
+                  />
+                </div>
+              ) : (
+                <p className="px-1 text-sm text-muted-foreground">
+                  Select an element in the list or click it in the preview to
+                  edit its settings.
+                </p>
+              )}
+            </div>
+          </aside>
+        ) : null}
       </div>
 
       {viewMode === "fullscreen" ? (

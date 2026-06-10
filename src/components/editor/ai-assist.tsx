@@ -40,7 +40,11 @@ export function AiAssist({
 
   return (
     <div className="flex flex-col gap-2">
-      <Label htmlFor="ai-prompt" className="px-1 text-sm font-semibold">
+      <Label
+        htmlFor="ai-prompt"
+        className="px-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+      >
+        <Sparkles className="size-3.5 text-primary" aria-hidden />
         AI assist
       </Label>
       <Textarea

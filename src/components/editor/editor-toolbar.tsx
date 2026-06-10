@@ -7,6 +7,7 @@ import {
   Maximize,
   PanelLeft,
   Save,
+  Scissors,
 } from "lucide-react"
 import Link from "next/link"
 
@@ -36,6 +37,9 @@ export function EditorToolbar({
 }) {
   return (
     <header className="sticky top-0 z-30 flex flex-wrap items-center gap-2 border-b bg-background px-3 py-2">
+      <div className="flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
+        <Scissors className="size-3.5" aria-hidden />
+      </div>
       <Button
         variant="ghost"
         size="icon-sm"
