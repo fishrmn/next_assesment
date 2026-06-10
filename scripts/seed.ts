@@ -3,7 +3,7 @@
  * pages table is empty, so it's safe to run repeatedly).
  * Run with `npm run db:seed` — it loads env vars from .env.local.
  */
-import { supabase } from "../src/db/client"
+import { getSupabase } from "../src/db/client"
 import type { PageConfig } from "../src/components/builder/types"
 
 const exampleConfig: PageConfig = [
@@ -22,6 +22,8 @@ const exampleConfig: PageConfig = [
 ]
 
 async function main() {
+  const supabase = getSupabase()
+
   const { data: user, error: userError } = await supabase
     .from("users")
     .upsert({ name: "Demo User", email: "demo@salon.local" }, { onConflict: "email" })

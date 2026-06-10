@@ -1,6 +1,6 @@
 import type { PageConfig } from "@/components/builder/types"
 
-import { supabase } from "./client"
+import { getSupabase } from "./client"
 import type { Page, User } from "./types"
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -12,7 +12,7 @@ const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{
 const DEFAULT_USER = { name: "Demo User", email: "demo@salon.local" }
 
 export async function getDefaultUser(): Promise<User> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from("users")
     .upsert(DEFAULT_USER, { onConflict: "email" })
     .select()
@@ -22,7 +22,7 @@ export async function getDefaultUser(): Promise<User> {
 }
 
 export async function listPages(): Promise<Page[]> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from("pages")
     .select("*")
     .order("updated_at", { ascending: false })
@@ -32,7 +32,7 @@ export async function listPages(): Promise<Page[]> {
 
 export async function getPage(id: string): Promise<Page | null> {
   if (!UUID_PATTERN.test(id)) return null
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from("pages")
     .select("*")
     .eq("id", id)
@@ -48,7 +48,7 @@ export async function createPage(input: {
   userId?: string
 }): Promise<Page> {
   const userId = input.userId ?? (await getDefaultUser()).id
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from("pages")
     .insert({
       name: input.name,
@@ -66,7 +66,7 @@ export async function updatePage(
   id: string,
   patch: { name?: string; config?: PageConfig }
 ): Promise<Page> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from("pages")
     .update({ ...patch, updated_at: new Date().toISOString() })
     .eq("id", id)
@@ -77,6 +77,6 @@ export async function updatePage(
 }
 
 export async function deletePage(id: string): Promise<void> {
-  const { error } = await supabase.from("pages").delete().eq("id", id)
+  const { error } = await getSupabase().from("pages").delete().eq("id", id)
   if (error) throw new Error(`Failed to delete page ${id}: ${error.message}`)
 }
