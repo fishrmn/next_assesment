@@ -4,7 +4,9 @@
  */
 import { existsSync, unlinkSync } from "node:fs"
 
-for (const file of ["local.db", "local.db-wal", "local.db-shm"]) {
+import { getDatabaseFiles } from "../src/db/path"
+
+for (const file of getDatabaseFiles()) {
   if (existsSync(file)) {
     unlinkSync(file)
     console.log(`Deleted ${file}`)

@@ -16,6 +16,20 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000). The home page summarizes this brief and is yours to replace as the app takes shape.
 
+### Docker (development)
+
+Requires [Docker](https://docs.docker.com/get-docker/) and a `.env.local` file (same as the non-Docker workflow above).
+
+```bash
+npm run docker
+```
+
+Open [http://localhost:3000](http://localhost:3000). On first run the entrypoint creates and seeds the database automatically.
+
+- The SQLite database persists in the `sqlite_data` named volume across restarts.
+- Rebuild after dependency changes: `npm run docker`
+- Stop: `docker compose down` (add `-v` to also wipe the database volume)
+
 ## What you're building
 
 An interactive page builder where a user can:
