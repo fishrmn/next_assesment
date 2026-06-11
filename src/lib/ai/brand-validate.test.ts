@@ -33,6 +33,18 @@ describe("validateBrandProfile", () => {
     expect(validateBrandProfile(validProfile)).toEqual({ ok: true })
   })
 
+  it("accepts contact fields and rejects non-string ones", () => {
+    expect(
+      validateBrandProfile({
+        ...validProfile,
+        phone: "+1 555 0100",
+        email: "hello@maisonbelle.test",
+        address: "12 Rue Belle, Old Town",
+      })
+    ).toEqual({ ok: true })
+    expect(validateBrandProfile({ ...validProfile, phone: 5550100 }).ok).toBe(false)
+  })
+
   it("accepts a profile without optional fields", () => {
     const { idealClients: _i, ...rest } = validProfile
     void _i

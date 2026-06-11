@@ -192,6 +192,35 @@ describe("runBrandAgent", () => {
     expect(create).toHaveBeenCalledTimes(3)
   })
 
+  it("places the uploaded logo into the generated navbar", async () => {
+    const { client } = fakeOpenAI([
+      {
+        content: null,
+        tool_calls: [
+          toolCall("c1", "generate_page", {
+            directionId: "a",
+            rebrandInstruction: "Rebrand everything",
+          }),
+        ],
+      },
+      { content: "Done rebranding." },
+    ])
+
+    const messages: BrandChatMessage[] = [
+      { role: "user", text: "here is my logo", imageDataUrl: "data:image/jpeg;base64,LOGO" },
+      { role: "assistant", text: "Beautiful!" },
+      { role: "user", text: "I choose direction a" },
+    ]
+    const result = await runBrandAgent(
+      messages,
+      { profile: profile as BrandState["profile"], directions: directions as BrandState["directions"] },
+      client
+    )
+
+    const navbar = result.page!.config.find((el) => el.type === "navbar")
+    expect(navbar).toMatchObject({ logoUrl: "data:image/jpeg;base64,LOGO" })
+  })
+
   it("returns an error to the model for an unknown direction id", async () => {
     const { client, create } = fakeOpenAI([
       {

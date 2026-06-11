@@ -28,6 +28,10 @@ export type BrandProfile = {
   /** Style/personality read of the uploaded logo, if any. */
   logoNotes?: string
   instagram?: string
+  phone?: string
+  email?: string
+  /** Street address / location of the salon. */
+  address?: string
 }
 
 export type BrandDirection = {

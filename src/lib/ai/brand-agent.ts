@@ -21,27 +21,42 @@ import type {
 const DEFAULT_MODEL = "gpt-4o-mini"
 const MAX_ITERATIONS = 4
 
-const SYSTEM_PROMPT = `You are a friendly branding consultant for salon owners
+const SYSTEM_PROMPT = `You are an expert branding consultant for salon owners
 using a website builder. Your job is to help them discover their digital brand
 identity before their website is built — you are a consultant, not a form.
 
 Interview (adapt to what the user volunteers; never re-ask answered questions;
 ask 1–2 questions per message, warm and conversational):
-- Salon name and the services they offer
+- Salon name and the services they offer (with rough prices if they know them)
 - Who their ideal clients are
 - Whether they have a logo (invite them to attach it) or an Instagram/website
+- Contact details for the website: phone, email, and the salon's location
 - Salons or brands that inspire them
 - Their brand in about three words
 
+Be genuinely smart about it:
+- Infer instead of interrogating. "We do balayage and bridal updos in a
+  renovated loft downtown" already tells you services, a location hint, and
+  an upscale-modern positioning — acknowledge it and move on.
+- Mirror the owner's language and reference their earlier answers.
+- If an answer is vague ("we do everything"), offer concrete options to pick
+  from rather than repeating the question.
+- Group the practical questions (phone, email, location) into one short
+  message late in the interview — don't scatter them.
+- If the user is impatient or asks to skip ahead, work with what you have.
+
 Logo analysis: when the user attaches an image, read its dominant colors,
 visual style (modern vs classic), and positioning (luxury vs approachable),
-and explain your read in plain language. Derive the palette from it.
+and explain your read in plain language. Derive the palette from it. The
+uploaded logo will automatically be placed in the website's navbar, so
+acknowledge that their logo will appear on the site.
 
 Milestones (use the tools; never paste JSON into chat):
 1. After roughly 4–7 exchanges, when you have enough signal, call
-   set_brand_profile exactly once. Derive hex colors for the palette — from
-   the logo when provided, otherwise from the conversation. Then present the
-   profile conversationally and explain why the palette fits their business.
+   set_brand_profile exactly once. Include phone/email/address when shared.
+   Derive hex colors for the palette — from the logo when provided,
+   otherwise from the conversation. Then present the profile conversationally
+   and explain why the palette fits their business.
 2. Next, call propose_directions with exactly 3 distinct directions tailored
    to this salon. Anchor each to a base template:
    - "elegance": warm ivory & gold, serene spa-like, centered, serif feel
@@ -51,15 +66,16 @@ Milestones (use the tools; never paste JSON into chat):
    from the template names. Then ask the user to choose one.
 3. When the user picks a direction, call generate_page. The
    rebrandInstruction MUST demand finished, professional content — checklist:
-   - navbar: the salon's name as the brand name (it renders as the text
-     logo — the user's uploaded logo file is not stored, so never invent a
-     logoUrl), menu links kept sensible, CTA label matching the brand
+   - navbar: the salon's name as the brand name, menu links kept sensible,
+     CTA label matching the brand (their uploaded logo is added to the
+     navbar automatically — never invent a logoUrl)
    - hero: the salon's real name + a tagline matching the vibe words
    - services: the owner's actual services with realistic prices and
      one-line descriptions
    - intro/about text: written for their ideal clients, in their tone
    - CTA labels matching the brand register (luxury vs friendly)
-   - contact: real details if shared, otherwise plausible placeholders
+   - contact: the real phone, email, and address from the profile —
+     plausible placeholders only for whatever was not shared
    - every color field mapped to the brand palette (hex values)
    - no template copy may survive; batch updates across elements
 After generate_page succeeds your job is done.
@@ -162,7 +178,8 @@ export async function runBrandAgent(
       }
 
       if (call.function.name === "generate_page") {
-        const outcome = await generatePage(working, args, openai)
+        const logoDataUrl = messages.findLast((m) => m.imageDataUrl)?.imageDataUrl
+        const outcome = await generatePage(working, args, openai, logoDataUrl)
         if ("error" in outcome) {
           conversation.push({
             role: "tool",
@@ -207,7 +224,8 @@ export async function runBrandAgent(
 async function generatePage(
   state: BrandState,
   args: unknown,
-  openai: OpenAI
+  openai: OpenAI,
+  logoDataUrl?: string
 ): Promise<{ page: { config: PageConfig; summary: string } } | { error: string }> {
   if (typeof args !== "object" || args === null) {
     return { error: "arguments must be a JSON object" }
@@ -229,9 +247,21 @@ async function generatePage(
 
   const baseConfig = normalizeConfig(structuredClone(template.config))
   const rebranded = await runEditAgent(baseConfig, rebrandInstruction, openai)
+
+  // The uploaded logo goes straight into the navbar — deterministic, so the
+  // model never has to handle (or invent) image URLs.
+  let placedLogo = false
+  const config = rebranded.config.map((element) => {
+    if (element.type === "navbar" && !placedLogo && logoDataUrl) {
+      placedLogo = true
+      return { ...element, logoUrl: logoDataUrl }
+    }
+    return element
+  })
+
   return {
     page: {
-      config: rebranded.config,
+      config,
       summary: `Your "${direction.name}" website is ready — review the preview below, then create the page to fine-tune it in the editor.`,
     },
   }

@@ -22,7 +22,7 @@ export const brandTools: ChatCompletionTool[] = [
           profile: {
             type: "object",
             description:
-              'Brand profile: { salonName, services: string[], idealClients?, vibeWords: string[] (~3 words), personality: { modernClassic: "modern"|"balanced"|"classic", luxuryApproachable: "luxury"|"balanced"|"approachable" }, palette: { primary, secondary, accent, background } (hex colors, derived from the logo when provided), paletteReasoning, logoNotes?, instagram? }',
+              'Brand profile: { salonName, services: string[], idealClients?, vibeWords: string[] (~3 words), personality: { modernClassic: "modern"|"balanced"|"classic", luxuryApproachable: "luxury"|"balanced"|"approachable" }, palette: { primary, secondary, accent, background } (hex colors, derived from the logo when provided), paletteReasoning, logoNotes?, instagram?, phone?, email?, address? }',
           },
         },
         required: ["profile"],

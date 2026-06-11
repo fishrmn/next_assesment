@@ -40,8 +40,10 @@ export function validateBrandProfile(value: unknown): ValidationResult {
   if (!isStringArray(value.vibeWords)) {
     return { ok: false, error: '"vibeWords" must be a non-empty array of strings' }
   }
-  if (!optionalString(value.idealClients) || !optionalString(value.logoNotes) || !optionalString(value.instagram)) {
-    return { ok: false, error: '"idealClients", "logoNotes", and "instagram" must be strings when present' }
+  for (const key of ["idealClients", "logoNotes", "instagram", "phone", "email", "address"]) {
+    if (!optionalString(value[key])) {
+      return { ok: false, error: `"${key}" must be a string when present` }
+    }
   }
 
   if (!isRecord(value.personality)) {
