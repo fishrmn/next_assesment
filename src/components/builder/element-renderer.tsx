@@ -2,6 +2,7 @@ import { ContactElement } from "./contact-element"
 import { CtaElement } from "./cta-element"
 import { GalleryElement } from "./gallery-element"
 import { HeroElement } from "./hero-element"
+import { NavbarElement } from "./navbar-element"
 import { ServicesElement } from "./services-element"
 import { TextElement } from "./text-element"
 import type { ElementConfig, PageConfig } from "./types"
@@ -9,6 +10,8 @@ import type { ElementConfig, PageConfig } from "./types"
 /** Renders a single element config by dispatching on its `type`. */
 export function ElementRenderer({ config }: { config: ElementConfig }) {
   switch (config.type) {
+    case "navbar":
+      return <NavbarElement config={config} />
     case "text":
       return (
         <div className="mx-auto w-full max-w-4xl px-6 py-6">

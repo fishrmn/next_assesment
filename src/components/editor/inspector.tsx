@@ -7,6 +7,7 @@ import {
   Image as ImageIcon,
   LayoutTemplate,
   MousePointerClick,
+  PanelTop,
   Scissors,
   Trash2,
   Type,
@@ -21,6 +22,7 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 const elementIcons: Record<ElementType, typeof Type> = {
+  navbar: PanelTop,
   text: Type,
   hero: LayoutTemplate,
   services: Scissors,
@@ -30,6 +32,7 @@ const elementIcons: Record<ElementType, typeof Type> = {
 }
 
 export const elementNames: Record<ElementType, string> = {
+  navbar: "Navbar",
   text: "Text",
   hero: "Hero",
   services: "Services",
@@ -40,6 +43,8 @@ export const elementNames: Record<ElementType, string> = {
 
 function elementLabel(element: ElementConfig): string {
   switch (element.type) {
+    case "navbar":
+      return element.brandName
     case "text":
       return element.text
     case "hero":

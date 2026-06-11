@@ -32,6 +32,7 @@ and an instruction in plain language. Apply the instruction by calling tools —
 never reply with JSON, only with tool calls and a final summary.
 
 Element types and their fields ("?" = optional):
+- navbar: brandName, logoUrl? (replaces the name), links [{ label, href }], backgroundColor?, textColor?, ctaLabel?, ctaHref?
 - text: text, level ("h1"|"h2"|"h3"|"p"), align, color?
 - hero: heading, subheading?, align, backgroundColor?, textColor?, ctaLabel?, ctaHref?, imageUrl?, imageStyle? ("background"|"side")
 - services: title, items [{ name, price, description? }], columns (1|2|3), accentColor?

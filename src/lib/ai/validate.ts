@@ -12,6 +12,22 @@ const ALIGN = { kind: "enum", values: ["left", "center", "right"], required: tru
 
 /** Field tables mirroring the ElementConfig union in src/components/builder/types.ts. */
 const ELEMENT_FIELDS: Record<ElementType, Record<string, FieldSpec>> = {
+  navbar: {
+    brandName: { kind: "string", required: true },
+    logoUrl: { kind: "string" },
+    links: {
+      kind: "array",
+      required: true,
+      item: {
+        label: { kind: "string", required: true },
+        href: { kind: "string", required: true },
+      },
+    },
+    backgroundColor: { kind: "string" },
+    textColor: { kind: "string" },
+    ctaLabel: { kind: "string" },
+    ctaHref: { kind: "string" },
+  },
   text: {
     text: { kind: "string", required: true },
     level: { kind: "enum", values: ["h1", "h2", "h3", "p"], required: true },

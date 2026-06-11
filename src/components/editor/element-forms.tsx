@@ -5,6 +5,7 @@ import { Plus, Trash2 } from "lucide-react"
 import type { ContactElementConfig } from "@/components/builder/contact-element"
 import type { CtaElementConfig } from "@/components/builder/cta-element"
 import type { GalleryElementConfig } from "@/components/builder/gallery-element"
+import type { NavbarElementConfig } from "@/components/builder/navbar-element"
 import type { ServicesElementConfig } from "@/components/builder/services-element"
 import type { TextElementConfig } from "@/components/builder/text-element"
 import type { ElementConfig } from "@/components/builder/types"
@@ -25,6 +26,94 @@ import {
 type FormProps<T extends ElementConfig["type"]> = {
   config: Extract<ElementConfig, { type: T }>
   onChange: (patch: Partial<Extract<ElementConfig, { type: T }>>) => void
+}
+
+function NavbarForm({ config, onChange }: FormProps<"navbar">) {
+  const updateLink = (
+    index: number,
+    patch: Partial<NavbarElementConfig["links"][number]>
+  ) => {
+    onChange({
+      links: config.links.map((link, i) =>
+        i === index ? { ...link, ...patch } : link
+      ),
+    })
+  }
+
+  return (
+    <>
+      <TextField
+        label="Brand name"
+        value={config.brandName}
+        onChange={(brandName) => onChange({ brandName })}
+      />
+      <TextField
+        label="Logo image URL"
+        value={config.logoUrl ?? ""}
+        placeholder="https://… (shown instead of the name)"
+        onChange={(logoUrl) => onChange({ logoUrl: logoUrl || undefined })}
+      />
+      <ColorField
+        label="Background color"
+        value={config.backgroundColor}
+        onChange={(backgroundColor) => onChange({ backgroundColor })}
+      />
+      <ColorField
+        label="Text color"
+        value={config.textColor}
+        onChange={(textColor) => onChange({ textColor })}
+      />
+      <TextField
+        label="Button label"
+        value={config.ctaLabel ?? ""}
+        onChange={(ctaLabel) => onChange({ ctaLabel: ctaLabel || undefined })}
+      />
+      <TextField
+        label="Button link"
+        value={config.ctaHref ?? ""}
+        placeholder="#contact"
+        onChange={(ctaHref) => onChange({ ctaHref: ctaHref || undefined })}
+      />
+      <Separator />
+      <Label>Menu links</Label>
+      {config.links.map((link, index) => (
+        <div key={index} className="flex gap-2">
+          <Input
+            aria-label={`Link ${index + 1} label`}
+            value={link.label}
+            placeholder="Label"
+            onChange={(e) => updateLink(index, { label: e.target.value })}
+          />
+          <Input
+            aria-label={`Link ${index + 1} URL`}
+            value={link.href}
+            placeholder="#"
+            onChange={(e) => updateLink(index, { href: e.target.value })}
+          />
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label={`Remove link ${index + 1}`}
+            onClick={() =>
+              onChange({ links: config.links.filter((_, i) => i !== index) })
+            }
+          >
+            <Trash2 />
+          </Button>
+        </div>
+      ))}
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() =>
+          onChange({ links: [...config.links, { label: "New link", href: "#" }] })
+        }
+      >
+        <Plus data-icon="inline-start" />
+        Add link
+      </Button>
+    </>
+  )
 }
 
 function TextForm({ config, onChange }: FormProps<"text">) {
@@ -417,6 +506,8 @@ export function ElementForm({
   onChange: (patch: Partial<ElementConfig>) => void
 }) {
   switch (config.type) {
+    case "navbar":
+      return <NavbarForm config={config} onChange={onChange} />
     case "text":
       return <TextForm config={config} onChange={onChange} />
     case "hero":

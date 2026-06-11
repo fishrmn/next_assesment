@@ -20,6 +20,20 @@ const elegance: Template = {
   description: "Warm and serene — ivory, soft gold, spa-like calm.",
   config: [
     {
+      type: "navbar",
+      brandName: "Maison Élégance",
+      links: [
+        { label: "Home", href: "#" },
+        { label: "Services", href: "#" },
+        { label: "Gallery", href: "#" },
+        { label: "Contact", href: "#contact" },
+      ],
+      backgroundColor: "#faf7f0",
+      textColor: "#3f3528",
+      ctaLabel: "Book now",
+      ctaHref: "#contact",
+    },
+    {
       type: "hero",
       heading: "Elevate Your Style, Define Your Confidence",
       subheading:
@@ -124,6 +138,19 @@ const moderna: Template = {
   description: "Editorial dusty rose — soft, warm, magazine-like.",
   config: [
     {
+      type: "navbar",
+      brandName: "Salon Moderna",
+      links: [
+        { label: "About", href: "#" },
+        { label: "Services", href: "#" },
+        { label: "Team", href: "#" },
+      ],
+      backgroundColor: "#dca291",
+      textColor: "#2e211b",
+      ctaLabel: "Book appointment",
+      ctaHref: "#contact",
+    },
+    {
       type: "hero",
       heading: "Welcome to Salon Moderna",
       subheading:
@@ -220,6 +247,19 @@ const lush: Template = {
   name: "Lush",
   description: "Colorful and playful — pink, violet, and plenty of photos.",
   config: [
+    {
+      type: "navbar",
+      brandName: "Lush & Lovely",
+      links: [
+        { label: "Fresh looks", href: "#" },
+        { label: "Treat yourself", href: "#" },
+        { label: "Say hello", href: "#contact" },
+      ],
+      backgroundColor: "#fdf2f8",
+      textColor: "#86198f",
+      ctaLabel: "Come say hi",
+      ctaHref: "#contact",
+    },
     {
       type: "hero",
       heading: "Lush & Lovely",

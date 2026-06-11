@@ -49,6 +49,19 @@ export function editorReducer(
 export function defaultElementConfig(type: ElementType): ElementConfig {
   const id = crypto.randomUUID()
   switch (type) {
+    case "navbar":
+      return {
+        id,
+        type: "navbar",
+        brandName: "Your Salon",
+        links: [
+          { label: "Services", href: "#" },
+          { label: "Gallery", href: "#" },
+          { label: "Contact", href: "#" },
+        ],
+        ctaLabel: "Book now",
+        ctaHref: "#contact",
+      }
     case "text":
       return { id, type: "text", text: "New text", level: "p", align: "left" }
     case "hero":

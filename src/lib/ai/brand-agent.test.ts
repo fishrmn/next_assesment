@@ -184,8 +184,9 @@ describe("runBrandAgent", () => {
 
     expect(result.page).toBeDefined()
     expect(result.page!.summary).toContain("Luxury Spa Retreat")
-    // The page derives from the elegance template (hero first).
-    expect(result.page!.config[0]).toMatchObject({ type: "hero" })
+    // The page derives from the elegance template (navbar, then hero).
+    expect(result.page!.config[0]).toMatchObject({ type: "navbar" })
+    expect(result.page!.config[1]).toMatchObject({ type: "hero" })
     expect(result.message).toBe(result.page!.summary)
     // Outer call + 2 nested edit-agent calls.
     expect(create).toHaveBeenCalledTimes(3)

@@ -2,6 +2,7 @@ import type { CtaElementConfig } from "./cta-element"
 import type { ContactElementConfig } from "./contact-element"
 import type { GalleryElementConfig } from "./gallery-element"
 import type { HeroElementConfig } from "./hero-element"
+import type { NavbarElementConfig } from "./navbar-element"
 import type { ServicesElementConfig } from "./services-element"
 import type { TextElementConfig } from "./text-element"
 
@@ -14,6 +15,7 @@ import type { TextElementConfig } from "./text-element"
  * can be selected and reordered. Renderers ignore it.
  */
 export type ElementConfig = (
+  | NavbarElementConfig
   | TextElementConfig
   | HeroElementConfig
   | ServicesElementConfig

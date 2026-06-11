@@ -51,6 +51,9 @@ Milestones (use the tools; never paste JSON into chat):
    from the template names. Then ask the user to choose one.
 3. When the user picks a direction, call generate_page. The
    rebrandInstruction MUST demand finished, professional content — checklist:
+   - navbar: the salon's name as the brand name (it renders as the text
+     logo — the user's uploaded logo file is not stored, so never invent a
+     logoUrl), menu links kept sensible, CTA label matching the brand
    - hero: the salon's real name + a tagline matching the vibe words
    - services: the owner's actual services with realistic prices and
      one-line descriptions
