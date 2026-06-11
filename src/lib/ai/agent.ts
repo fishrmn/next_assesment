@@ -5,6 +5,7 @@ import type { ChatCompletionMessageParam } from "openai/resources/chat/completio
 
 import type { PageConfig } from "@/components/builder/types"
 
+import { runToolLoop } from "./tool-loop"
 import { dispatchTool, editorTools } from "./tools"
 
 const DEFAULT_MODEL = "gpt-4o-mini"
@@ -80,46 +81,25 @@ export async function runEditAgent(
   let working = config
   let changed = false
 
-  for (let round = 0; round < MAX_ITERATIONS; round++) {
-    const response = await openai.chat.completions.create({
-      model,
-      messages,
-      tools: editorTools,
-    })
-    const message = response.choices[0]?.message
-    if (!message) break
-
-    const toolCalls = (message.tool_calls ?? []).filter(
-      (call) => call.type === "function"
-    )
-    if (toolCalls.length === 0) {
-      return {
-        config: working,
-        summary: message.content?.trim() || (changed ? "Applied the requested changes." : "No changes made."),
-        changed,
-      }
-    }
-
-    messages.push(message)
-    for (const call of toolCalls) {
-      let args: unknown
-      let outcome
-      try {
-        args = JSON.parse(call.function.arguments)
-        outcome = dispatchTool(working, call.function.name, args)
-      } catch {
-        outcome = { config: working, result: "Error: arguments are not valid JSON", mutated: false }
-      }
+  const result = await runToolLoop({
+    openai,
+    model,
+    messages,
+    tools: editorTools,
+    maxIterations: MAX_ITERATIONS,
+    onToolCall: async (name, args) => {
+      const outcome = dispatchTool(working, name, args)
       working = outcome.config
       changed ||= outcome.mutated
-      messages.push({ role: "tool", tool_call_id: call.id, content: outcome.result })
-    }
-  }
+      return outcome.result
+    },
+  })
 
-  // Iteration cap reached — return whatever validated changes were applied.
+  const fallback = changed ? "Applied the requested changes." : "No changes made."
   return {
     config: working,
-    summary: changed ? "Applied the requested changes." : "No changes made.",
+    // On the iteration cap, return whatever validated changes were applied.
+    summary: result.kind === "text" ? result.text || fallback : fallback,
     changed,
   }
 }

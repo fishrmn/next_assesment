@@ -1,17 +1,6 @@
 "use client"
 
-import {
-  ChevronDown,
-  ChevronUp,
-  Contact,
-  Image as ImageIcon,
-  LayoutTemplate,
-  MousePointerClick,
-  PanelTop,
-  Scissors,
-  Trash2,
-  Type,
-} from "lucide-react"
+import { ChevronDown, ChevronUp, Trash2 } from "lucide-react"
 
 import type {
   ElementConfig,
@@ -21,25 +10,7 @@ import type {
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
-const elementIcons: Record<ElementType, typeof Type> = {
-  navbar: PanelTop,
-  text: Type,
-  hero: LayoutTemplate,
-  services: Scissors,
-  gallery: ImageIcon,
-  cta: MousePointerClick,
-  contact: Contact,
-}
-
-export const elementNames: Record<ElementType, string> = {
-  navbar: "Navbar",
-  text: "Text",
-  hero: "Hero",
-  services: "Services",
-  gallery: "Gallery",
-  cta: "Button",
-  contact: "Contact",
-}
+import { elementMeta, elementTypes } from "./element-meta"
 
 function elementLabel(element: ElementConfig): string {
   switch (element.type) {
@@ -82,7 +53,7 @@ export function Inspector({
         </h2>
         <ul className="flex flex-col gap-1">
           {config.map((element, index) => {
-            const Icon = elementIcons[element.type]
+            const Icon = elementMeta[element.type].icon
             return (
               <li key={element.id} className="group flex items-center gap-1">
                 <button
@@ -98,13 +69,13 @@ export function Inspector({
                   <Icon className="size-4 shrink-0 opacity-60" />
                   <span className="truncate">{elementLabel(element)}</span>
                   <span className="ml-auto shrink-0 text-xs text-muted-foreground">
-                    {elementNames[element.type]}
+                    {elementMeta[element.type].name}
                   </span>
                 </button>
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  aria-label={`Move ${elementNames[element.type]} up`}
+                  aria-label={`Move ${elementMeta[element.type].name} up`}
                   disabled={index === 0}
                   onClick={() => onMove(element.id!, "up")}
                 >
@@ -113,7 +84,7 @@ export function Inspector({
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  aria-label={`Move ${elementNames[element.type]} down`}
+                  aria-label={`Move ${elementMeta[element.type].name} down`}
                   disabled={index === config.length - 1}
                   onClick={() => onMove(element.id!, "down")}
                 >
@@ -122,7 +93,7 @@ export function Inspector({
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  aria-label={`Remove ${elementNames[element.type]}`}
+                  aria-label={`Remove ${elementMeta[element.type].name}`}
                   onClick={() => onRemove(element.id!)}
                 >
                   <Trash2 />
@@ -138,8 +109,8 @@ export function Inspector({
           Add element
         </h2>
         <div className="grid grid-cols-3 gap-2">
-          {(Object.keys(elementNames) as ElementType[]).map((type) => {
-            const Icon = elementIcons[type]
+          {elementTypes.map((type) => {
+            const Icon = elementMeta[type].icon
             return (
               <Button
                 key={type}
@@ -148,7 +119,7 @@ export function Inspector({
                 onClick={() => onAdd(type)}
               >
                 <Icon data-icon="inline-start" />
-                {elementNames[type]}
+                {elementMeta[type].name}
               </Button>
             )
           })}

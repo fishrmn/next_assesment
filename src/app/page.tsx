@@ -86,7 +86,7 @@ export default async function Home() {
               <Card
                 key={page.id}
                 size="sm"
-                className="gap-0 py-0 transition-shadow duration-200 hover:shadow-lg hover:ring-foreground/20"
+                className="gap-0 py-0 transition-shadow duration-200 [contain-intrinsic-size:auto_330px] [content-visibility:auto] hover:shadow-lg hover:ring-foreground/20"
               >
                 <Link
                   href={`/builder/${page.id}`}

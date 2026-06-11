@@ -11,7 +11,7 @@ const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{
  */
 const DEFAULT_USER = { name: "Demo User", email: "demo@salon.local" }
 
-export async function getDefaultUser(): Promise<User> {
+async function upsertDefaultUser(): Promise<User> {
   const { data, error } = await getSupabase()
     .from("users")
     .upsert(DEFAULT_USER, { onConflict: "email" })
@@ -21,11 +21,29 @@ export async function getDefaultUser(): Promise<User> {
   return data as User
 }
 
-export async function listPages(): Promise<Page[]> {
+/**
+ * The default user is fixed, so the upsert result is cached for the lifetime
+ * of the server instance — page creation skips a DB round-trip. A failed
+ * attempt clears the cache so the next call retries.
+ */
+let defaultUserPromise: Promise<User> | null = null
+
+export function getDefaultUser(): Promise<User> {
+  if (!defaultUserPromise) {
+    defaultUserPromise = upsertDefaultUser().catch((error) => {
+      defaultUserPromise = null
+      throw error
+    })
+  }
+  return defaultUserPromise
+}
+
+export async function listPages(limit = 50): Promise<Page[]> {
   const { data, error } = await getSupabase()
     .from("pages")
     .select("*")
     .order("updated_at", { ascending: false })
+    .limit(limit)
   if (error) throw new Error(`Failed to list pages: ${error.message}`)
   return (data ?? []) as Page[]
 }

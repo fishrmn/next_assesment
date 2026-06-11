@@ -12,6 +12,7 @@ import { getTemplate } from "@/lib/templates"
 
 import { getOpenAI, runEditAgent } from "./agent"
 import { brandTools, dispatchBrandTool } from "./brand-tools"
+import { runToolLoop } from "./tool-loop"
 import type {
   BrandChatMessage,
   BrandState,
@@ -142,61 +143,22 @@ export async function runBrandAgent(
 
   let working = state
   const result: BrandTurnResult = { message: "", state }
+  const logoDataUrl = messages.findLast((m) => m.imageDataUrl)?.imageDataUrl
 
-  for (let round = 0; round < MAX_ITERATIONS; round++) {
-    const response = await openai.chat.completions.create({
-      model,
-      messages: conversation,
-      tools: brandTools,
-    })
-    const message = response.choices[0]?.message
-    if (!message) break
-
-    const toolCalls = (message.tool_calls ?? []).filter(
-      (call) => call.type === "function"
-    )
-    if (toolCalls.length === 0) {
-      return {
-        ...result,
-        message: message.content?.trim() || "Could you tell me a bit more?",
-        state: working,
-      }
-    }
-
-    conversation.push(message)
-    for (const call of toolCalls) {
-      let args: unknown
-      try {
-        args = JSON.parse(call.function.arguments)
-      } catch {
-        conversation.push({
-          role: "tool",
-          tool_call_id: call.id,
-          content: "Error: arguments are not valid JSON",
-        })
-        continue
-      }
-
-      if (call.function.name === "generate_page") {
-        const logoDataUrl = messages.findLast((m) => m.imageDataUrl)?.imageDataUrl
+  const loop = await runToolLoop<{ config: PageConfig; summary: string }>({
+    openai,
+    model,
+    messages: conversation,
+    tools: brandTools,
+    maxIterations: MAX_ITERATIONS,
+    onToolCall: async (name, args) => {
+      if (name === "generate_page") {
         const outcome = await generatePage(working, args, openai, logoDataUrl)
-        if ("error" in outcome) {
-          conversation.push({
-            role: "tool",
-            tool_call_id: call.id,
-            content: `Error: ${outcome.error}`,
-          })
-          continue
-        }
+        if ("error" in outcome) return `Error: ${outcome.error}`
         // Terminal: the page is ready — no need to ask the model to narrate it.
-        return {
-          message: outcome.page.summary,
-          state: working,
-          page: outcome.page,
-        }
+        return { terminal: outcome.page }
       }
-
-      const outcome = dispatchBrandTool(working, call.function.name, args)
+      const outcome = dispatchBrandTool(working, name, args)
       working = outcome.state
       if (outcome.artifact?.kind === "profile") {
         result.profile = outcome.artifact.profile
@@ -204,18 +166,17 @@ export async function runBrandAgent(
       if (outcome.artifact?.kind === "directions") {
         result.directions = outcome.artifact.directions
       }
-      conversation.push({
-        role: "tool",
-        tool_call_id: call.id,
-        content: outcome.result,
-      })
-    }
-  }
+      return outcome.result
+    },
+  })
 
+  if (loop.kind === "terminal") {
+    return { message: loop.value.summary, state: working, page: loop.value }
+  }
   return {
     ...result,
     message:
-      result.message ||
+      (loop.kind === "text" ? loop.text : "") ||
       "I've noted that — anything else you'd like to share about your salon?",
     state: working,
   }

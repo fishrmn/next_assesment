@@ -1,8 +1,4 @@
-import type {
-  ElementConfig,
-  ElementType,
-  PageConfig,
-} from "@/components/builder/types"
+import type { ElementConfig, PageConfig } from "@/components/builder/types"
 
 export type EditorAction =
   | { type: "update"; id: string; patch: Partial<ElementConfig> }
@@ -43,65 +39,5 @@ export function editorReducer(
       return [...config, action.element]
     case "replace":
       return action.config
-  }
-}
-
-export function defaultElementConfig(type: ElementType): ElementConfig {
-  const id = crypto.randomUUID()
-  switch (type) {
-    case "navbar":
-      return {
-        id,
-        type: "navbar",
-        brandName: "Your Salon",
-        links: [
-          { label: "Services", href: "#" },
-          { label: "Gallery", href: "#" },
-          { label: "Contact", href: "#" },
-        ],
-        ctaLabel: "Book now",
-        ctaHref: "#contact",
-      }
-    case "text":
-      return { id, type: "text", text: "New text", level: "p", align: "left" }
-    case "hero":
-      return {
-        id,
-        type: "hero",
-        heading: "New section heading",
-        subheading: "A short tagline goes here.",
-        align: "center",
-      }
-    case "services":
-      return {
-        id,
-        type: "services",
-        title: "Services",
-        columns: 2,
-        items: [{ name: "New service", price: "$0" }],
-      }
-    case "gallery":
-      return {
-        id,
-        type: "gallery",
-        title: "Gallery",
-        columns: 3,
-        rounded: true,
-        images: [
-          { src: "https://picsum.photos/seed/new/600/600", alt: "New image" },
-        ],
-      }
-    case "cta":
-      return { id, type: "cta", label: "Call to action", href: "#", align: "center", size: "md" }
-    case "contact":
-      return {
-        id,
-        type: "contact",
-        title: "Contact",
-        address: "123 Street, City",
-        phone: "+1 555 0000",
-        align: "left",
-        hours: [],
-      }
   }
 }

@@ -59,11 +59,20 @@ export function BrandChat() {
     setError(null)
 
     startTransition(async () => {
+      // Only the latest logo is sent as image data — the agent only looks at
+      // that one, and older data URLs would bloat every request.
+      const lastImageIndex = nextTranscript.reduce(
+        (last, entry, index) => (entry.imageDataUrl ? index : last),
+        -1
+      )
       const result = await brandChatAction({
-        messages: nextTranscript.map(({ role, text, imageDataUrl }) => ({
+        messages: nextTranscript.map(({ role, text, imageDataUrl }, index) => ({
           role,
-          text,
-          imageDataUrl,
+          text:
+            imageDataUrl && index !== lastImageIndex
+              ? `${text} [logo image was attached]`
+              : text,
+          imageDataUrl: index === lastImageIndex ? imageDataUrl : undefined,
         })),
         state,
       })

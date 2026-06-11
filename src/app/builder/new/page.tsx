@@ -1,7 +1,7 @@
 import { ArrowLeft, LayoutTemplate, Sparkles } from "lucide-react"
+import dynamic from "next/dynamic"
 import Link from "next/link"
 
-import { BrandChat } from "@/components/brand/brand-chat"
 import { TemplatePicker } from "@/components/editor/template-picker"
 import { Button } from "@/components/ui/button"
 import {
@@ -10,6 +10,18 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
+
+// The chat (and its artifact cards) only loads when the tab is opened.
+const BrandChat = dynamic(
+  () => import("@/components/brand/brand-chat").then((m) => m.BrandChat),
+  {
+    loading: () => (
+      <p className="py-8 text-sm text-muted-foreground">
+        Loading the brand assistant…
+      </p>
+    ),
+  }
+)
 
 export default function NewPagePage() {
   return (

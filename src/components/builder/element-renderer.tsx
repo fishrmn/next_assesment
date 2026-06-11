@@ -1,3 +1,5 @@
+import { memo } from "react"
+
 import { ContactElement } from "./contact-element"
 import { CtaElement } from "./cta-element"
 import { GalleryElement } from "./gallery-element"
@@ -7,8 +9,16 @@ import { ServicesElement } from "./services-element"
 import { TextElement } from "./text-element"
 import type { ElementConfig, PageConfig } from "./types"
 
-/** Renders a single element config by dispatching on its `type`. */
-export function ElementRenderer({ config }: { config: ElementConfig }) {
+/**
+ * Renders a single element config by dispatching on its `type`. Memoized:
+ * the editor reducer replaces only the edited element's reference, so during
+ * live editing every other element skips re-rendering.
+ */
+export const ElementRenderer = memo(function ElementRenderer({
+  config,
+}: {
+  config: ElementConfig
+}) {
   switch (config.type) {
     case "navbar":
       return <NavbarElement config={config} />
@@ -33,7 +43,7 @@ export function ElementRenderer({ config }: { config: ElementConfig }) {
       throw new Error(`Unknown element type: ${JSON.stringify(exhaustive)}`)
     }
   }
-}
+})
 
 /**
  * Renders a full page config in order. Pure (no hooks), so it powers the

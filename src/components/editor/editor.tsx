@@ -12,14 +12,11 @@ import type { Page } from "@/db/types"
 import { cn } from "@/lib/utils"
 
 import { AiAssist } from "./ai-assist"
-import {
-  defaultElementConfig,
-  editorReducer,
-  normalizeConfig,
-} from "./editor-reducer"
+import { editorReducer, normalizeConfig } from "./editor-reducer"
 import { EditorToolbar, type ViewMode } from "./editor-toolbar"
 import { ElementForm } from "./element-forms"
-import { elementNames, Inspector } from "./inspector"
+import { defaultElementConfig, elementName } from "./element-meta"
+import { Inspector } from "./inspector"
 
 export function Editor({ initialPage }: { initialPage: Page }) {
   const [config, dispatch] = useReducer(
@@ -198,7 +195,7 @@ export function Editor({ initialPage }: { initialPage: Page }) {
               {selected ? (
                 <div className="flex flex-col gap-4 pb-8">
                   <h2 className="px-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    {elementNames[selected.type]} settings
+                    {elementName(selected.type)} settings
                   </h2>
                   <ElementForm
                     config={selected}

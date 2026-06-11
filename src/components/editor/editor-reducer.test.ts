@@ -2,11 +2,8 @@ import { describe, expect, it } from "vitest"
 
 import type { PageConfig } from "@/components/builder/types"
 
-import {
-  defaultElementConfig,
-  editorReducer,
-  normalizeConfig,
-} from "./editor-reducer"
+import { defaultElementConfig } from "./element-meta"
+import { editorReducer, normalizeConfig } from "./editor-reducer"
 
 const config: PageConfig = [
   { id: "a", type: "text", text: "First", level: "p", align: "left" },
