@@ -16,7 +16,7 @@ const MAX_ITERATIONS = 6
  */
 let client: OpenAI | null = null
 
-function getOpenAI(): OpenAI {
+export function getOpenAI(): OpenAI {
   if (client) return client
   const apiKey = process.env.OPENAI_API_KEY
   if (!apiKey) {

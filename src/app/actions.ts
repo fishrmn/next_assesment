@@ -3,9 +3,16 @@
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
-import type { PageConfig } from "@/components/builder/types"
+import type { ElementConfig, PageConfig } from "@/components/builder/types"
 import { createPage, updatePage, type Page } from "@/db"
 import { runEditAgent, type AgentResult } from "@/lib/ai/agent"
+import { runBrandAgent } from "@/lib/ai/brand-agent"
+import type {
+  BrandChatMessage,
+  BrandState,
+  BrandTurnResult,
+} from "@/lib/ai/brand-types"
+import { validateElement } from "@/lib/ai/validate"
 import { getTemplate } from "@/lib/templates"
 
 export type ActionResult<T> =
@@ -34,6 +41,68 @@ export async function createPageAction(input: {
     })
   } catch (error) {
     console.error("createPageAction failed:", error)
+    return {
+      ok: false,
+      error: "Could not create the page. Check your Supabase setup and try again.",
+    }
+  }
+
+  revalidatePath("/")
+  redirect(`/builder/${page.id}`)
+}
+
+/**
+ * One turn of the Salon Brand Assistant conversation. Stateless: the client
+ * owns the transcript and the accumulated brand state; nothing is persisted.
+ */
+export async function brandChatAction(input: {
+  messages: BrandChatMessage[]
+  state: BrandState
+}): Promise<ActionResult<BrandTurnResult>> {
+  const last = input.messages.at(-1)
+  if (!last || last.role !== "user" || (!last.text.trim() && !last.imageDataUrl)) {
+    return { ok: false, error: "Write a message for the brand assistant." }
+  }
+  try {
+    return { ok: true, data: await runBrandAgent(input.messages, input.state) }
+  } catch (error) {
+    console.error("brandChatAction failed:", error)
+    return {
+      ok: false,
+      error: "The brand assistant hit a snag. Check your OpenAI setup and try again.",
+    }
+  }
+}
+
+/**
+ * Creates a page from a brand-assistant-generated config. The config
+ * round-trips through the client, so every element is re-validated here.
+ */
+export async function createBrandPageAction(input: {
+  name: string
+  config: PageConfig
+}): Promise<ActionResult<never>> {
+  const name = input.name.trim()
+  if (!name) {
+    return { ok: false, error: "Give your page a name." }
+  }
+  if (!Array.isArray(input.config) || input.config.length === 0) {
+    return { ok: false, error: "The generated page is empty — try again." }
+  }
+  const config: PageConfig = []
+  for (const element of input.config) {
+    const valid = validateElement(element)
+    if (!valid.ok) {
+      return { ok: false, error: `The generated page is invalid: ${valid.error}` }
+    }
+    config.push({ ...(element as ElementConfig), id: crypto.randomUUID() })
+  }
+
+  let page: Page
+  try {
+    page = await createPage({ name, template: "brand", config })
+  } catch (error) {
+    console.error("createBrandPageAction failed:", error)
     return {
       ok: false,
       error: "Could not create the page. Check your Supabase setup and try again.",
